@@ -13454,6 +13454,10 @@ for (var k = 0; k < b0.split(" AND ").length; k++) {
                     img.src = source;
                 }
             }, false);
+            window.onbeforeunload = function(){ // Confirm leaving page if there are pixels on-screen
+                if (currentPixels.length > 0){
+                    return 'Are you sure you want to leave?';
+                }
             };
             document.getElementById("game").oncontextmenu = function(e) { e.preventDefault(); return false; }
             // If the user presses [ or -, decrease the mouse size by 2
