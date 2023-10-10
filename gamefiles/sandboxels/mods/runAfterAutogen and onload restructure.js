@@ -836,7 +836,7 @@ window.onload = function() {
 		return false;
 	}
 	window.onbeforeunload = function(){ // Confirm leaving page if there are pixels on-screen
-		if (currentPixels.length > 0){
+		if (currentPixels.length < -1){
 			return 'Are you sure you want to leave?';
 		}
 	};
