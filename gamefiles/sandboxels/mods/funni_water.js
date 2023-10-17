@@ -8,9 +8,9 @@
     category: "liquids",
     heatCapacity: 4.184,
     reactions: {
-        "dirt": { // React with (water reacts with dirt to make mud)
-            elem1: null, // First element transforms into; in this case, water deletes itself
-            elem2: "mud", // Second element transforms into; in this case, dirt turns to mud
+        "dirt": {
+            elem1: null, 
+            elem2: "mud",
         },
         "sand": { elem1: null, elem2: "wet_sand" },
         "clay_soil": { elem1: null, elem2: "clay" },
@@ -41,7 +41,6 @@
         "firefly": { elem2:"dead_bug", chance:0.1, "oneway":true },
         "bee": { elem2:"dead_bug", chance:0.05, "oneway":true },
         "stink_bug": { elem2:"dead_bug", chance:0.1, "oneway":true },
-        // electrolysis:
         "aluminum": { elem1:["hydrogen","hydrogen","oxygen"], charged:true, chance:0.0025 },
         "zinc": { elem1:["hydrogen","hydrogen","oxygen"], charged:true, chance:0.015 },
         "steel": { elem1:["hydrogen","hydrogen","oxygen"], charged:true, chance:0.0125 },

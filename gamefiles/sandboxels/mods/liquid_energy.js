@@ -1,294 +1,174 @@
-elements.liquid_plasma = {
-    color: ["#8800ff","#b184d9","#8800ff"],
-    behavior: [
-    "XX|XX|XX",
-    "M2|DL%0.1|M2",
-    "M1|M1|M1",
-    ],
-    behaviorOn: [
-        "XX|CL%5|XX",
-        "CL%5 AND M2|XX|CL%5 AND M2",
-        "M1|M1 AND CL%5|M1",
-    ],
-    temp:7065,
-    tempLow:5000,
-    stateLow: "liquid_fire",
-    category: "energy liquids",
-    state: "liquid",
-    density: 70,
-    charge: 0.5,
-    conduct: 1,
-},
+var modName = "mods/life_eater.js";
+var fireMod = "mods/fire_mod.js";
 
-elements.liquid_fire = {
-    color: ["#ff6b21","#ffa600","#ff4000"],
-    behavior: [
-    "XX|M2|XX",
-    "M2|XX|M2",
-    "M1|M1|M1",
-    ],
-    reactions: {
-        "water": { "elem1": "liquid_smoke" },
+if (!enabledMods.includes(fireMod)) {
+  enabledMods.splice(enabledMods.indexOf(modName), 0, fireMod);
+  localStorage.setItem("enabledMods", JSON.stringify(enabledMods));
+  alert(`The ${fireMod} mod is required and has been automatically inserted (reload for this to take effect).`);
+} else {
+
+  var lifeEaterCategories = ["life", "auto creepers", "shit", "cum", "food", "fantastic creatures", "fey", "auto_fey"];
+  var lifeEaterBlacklist = ["life_eater_virus", "life_eater_slurry", "life_eater_infected_dirt"];
+  var lifeEaterWhitelist = ["blood", "poop", "blood_ice", "wood", "wood_plank", "sawdust", "straw", "paper", "birthpool", "dried_poop", "gloomfly", "meat_monster", "rotten_ravager", "bone_beast", "withery", "withery_plant", "banana", "apple", "rotten_apple", "apioform_player", "apioform_bee", "apioform", "apiodiagoform", "sugar_cactus", "sugar_cactus_seed", "flowering_sugar_cactus", "tree_branch", "sap", "silk", "red_velvet", "silk_velvet", "ketchup", "enchanted_ketchup", "frozen_ketchup", "poisoned_ketchup", "frozen_poisoned_ketchup", "ketchup_spout", "ketchup_cloud", "poisoned_ketchup_cloud", "ketchup_snow", "ketchup_snow_cloud", "poisoned_ketchup_snow", "poisoned_ketchup_snow_cloud", "ketchup_gas", "poisoned_ketchup_gas", "ketchup_powder", "poisoned_ketchup_powder", "eketchup_spout", "ketchup_metal", "antiketchup", "dirty_ketchup", "ketchup_gold", "molten_ketchup_metal", "ketchup_fairy", "ketchup_metal_scrap", "ketchup_gold_scrap", "molten_ketchup_gold", "mycelium", "vaccine", "antibody", "infection", "sap", "caramel", "molasses", "melted_chocolate", "soda", "mustard", "fry_sauce", "tomato_sauce", "sugary_tomato_sauce", "bio_ooze", "zombie_blood", "feather", "tooth", "decayed_tooth", "plaque", "tartar", "bacteria", "replacer_bacteria", "pop_rocks"];
+  var lifeEaterSubstitutions = {
+    "dirt": "life_eater_infected_dirt",
+  };
+
+  function tryCreatePlus(element, centerX, centerY) {
+    var plusCoords = adjacentCoords.concat([
+      [0, 0]
+    ]);
+    var pixels = 0;
+    for (let i = 0; i < plusCoords.length; i++) {
+      var newX = centerX + plusCoords[i][0];
+      var newY = centerY + plusCoords[i][1];
+      if (isEmpty(newX, newY)) {
+        while (element instanceof Array) {
+          element = element[Math.floor(Math.random() * element.length)]
+        };
+        createPixel(element, newX, newY);
+        pixels++;
+      };
+    };
+    return pixels;
+  };
+
+  function spreadLifeEater(pixel) {
+    var convertedPixels = [];
+    for (i = 0; i < adjacentCoords.length; i++) {
+      if (!isEmpty(pixel.x + adjacentCoords[i][0], pixel.y + adjacentCoords[i][1], true)) {
+        var newPixel = pixelMap[pixel.x + adjacentCoords[i][0]][pixel.y + adjacentCoords[i][1]]
+        var isLifeEaterFairy = (elements[newPixel.element].category == "auto_fey" && newPixel.element.includes("life_eater_"))
+
+        if (
+          (lifeEaterCategories.includes(elements[newPixel.element].category) || lifeEaterWhitelist.includes(newPixel.element) || Object.keys(lifeEaterSubstitutions).includes(newPixel.element)) &&
+          !lifeEaterBlacklist.includes(newPixel.element) &&
+          !isLifeEaterFairy
+        ) {
+          if (Object.keys(lifeEaterSubstitutions).includes(newPixel.element)) {
+            var data = lifeEaterSubstitutions[newPixel.element];
+            while (data instanceof Array) {
+              data = data[Math.floor(Math.random() * data.length)];
+            };
+            if (data === null) {
+              if (newPixel) {
+                deletePixel(newPixel.x, newPixel.y)
+              };
+            } else {
+              changePixel(newPixel, data);
+              convertedPixels.push(newPixel);
+            };
+          } else {
+            changePixel(newPixel, "life_eater_slurry");
+            convertedPixels.push(newPixel);
+          };
+        };
+      };
+    };
+    return convertedPixels;
+  };
+
+  elements.life_eater_explosion = {
+      color: ["#96c785", "#f0d654", "#ffb47a"],
+      behavior: [
+        "XX|XX|XX",
+        "XX|EX:9>plasma,fire,life_eater_virus|XX",
+        "XX|XX|XX",
+      ],
+      temp: 1600,
+      category: "energy",
+      state: "gas",
+      density: 1000,
+      excludeRandom: true,
+      hidden: true,
     },
-    temp:600,
-    tempLow:100,
-    stateLow: "liquid_smoke",
-    tempHigh: 7000,
-    stateHigh: "liquid_plasma",
-    category: "energy liquids",
-    burning: true,
-    burnTime: 500,
-    burnInto: "liquid_smoke",
-    state: "liquid",
-    density: 21,
-},
 
-elements.liquid_smoke = {
-    color: "#383838",
-    behavior: [
-    "XX|XX|XX",
-    "M2|DL%0.1|M2",
-    "M1|M1|M1",
-    ],
-    reactions: {
-        "water": { "elem1": "dirty_water", "elem2": null },
-        "steam": { "elem1": "pyrocumulus", "chance":0.08, "y":[0,15] },
-        "rain_cloud": { "elem1": "pyrocumulus", "chance":0.08, "y":[0,15] },
-        "snow_cloud": { "elem1": "pyrocumulus", "chance":0.08, "y":[0,15] },
-        "acid_cloud": { "elem1": "pyrocumulus", "chance":0.05, "y":[0,15] },
-        "fire_cloud": { "elem1": "pyrocumulus", "chance":0.05, "y":[0,15] },
-        "pyrocumulus": { "elem1": "pyrocumulus", "chance":0.08, "y":[0,15] },
+    elements.life_eater_virus = {
+      color: ["#7bb064", "#aabd60", "#9e9e29"],
+      behavior: behaviors.GAS,
+      tick: function(pixel) {
+        spreadLifeEater(pixel).forEach(infectedPixel => spreadLifeEater(infectedPixel));
+      },
+      category: "life",
+      state: "gas",
+      density: airDensity,
+      excludeRandom: true,
+      tempHigh: 300,
+      stateHigh: null,
+    };
+
+  elements.life_eater_slurry = {
+    color: ["#3d6e29", "#666617", "#7d5716"],
+    behavior: behaviors.LIQUID,
+    properties: {
+      methaned: false,
     },
-    temp: 114,
-    tempHigh: 605,
-    stateHigh: "liquid_fire",
-    category: "energy liquids",
+    tick: function(pixel) {
+      spreadLifeEater(pixel).forEach(infectedPixel => spreadLifeEater(infectedPixel));
+
+      if (pixelTicks - pixel.start > 6) {
+        if (!pixel.methaned && Math.random() < 0.2) {
+          changePixel(pixel, Math.random() < 0.2 ? "life_eater_virus" : "methane");
+        } else {
+          pixel.methaned = true;
+        };
+        tryCreatePlus(["methane", "methane", "methane", "methane", "life_eater_virus"], pixel.x, pixel.y);
+        return;
+      };
+    },
+    category: "life",
     state: "liquid",
-    density: 2180,
-},
+    density: 1050,
+    burn: 100,
+    burnTime: 10,
+    fireSpawnTemp: 1500,
+    burnTempChange: 200,
+    burnInto: ["life_eater_virus", "plasma", "fire", "life_eater_explosion"],
+    excludeRandom: true,
+  };
 
-elements.liquid_cold_fire = {
-    color: ["#21cbff","#006aff","#00ffff"],
+  var crRule50 = "CR:life_eater_virus,methane,methane,methane%0.5";
+  var crRule100 = "CR:life_eater_virus,methane,methane,methane%1";
+
+  elements.life_eater_infected_dirt = {
     behavior: [
-    "XX|M2|XX",
-    "M2|CH:liquid_smoke%0.1|M2",
-    "M1|M1|M1",
+      "XX|" + crRule100 + "|XX",
+      crRule50 + "|XX|" + crRule50,
+      "M2|M1 AND " + crRule50 + "|M2",
     ],
-	reactions: {
-		"fire": { "elem1": "liquid_smoke", "elem2": "liquid_smoke" },
-		"plasma": { "elem1": "le_liquid_light", "elem2": "le_liquid_light" }, //prefixed to avoid conflict with F&M liquid_light
-	},
-	temp:-200,
-	tempHigh:0,
-	stateHigh: "liquid_smoke",
-	category: "energy liquids",
-	state: "liquid",
-	density: 42,
-},
+    color: ["#757137", "#617a35", "#66622c", "#707538"],
+    tick: function(pixel) {
+      spreadLifeEater(pixel).forEach(infectedPixel => spreadLifeEater(infectedPixel));
+    },
+    category: "life",
+    state: "liquid",
+    density: 1050,
+    burn: 70,
+    burnTime: 15,
+    fireSpawnTemp: 1400,
+    burnTempChange: 180,
+    burnInto: ["life_eater_virus", "fire", "plasma", "life_eater_explosion"],
+    excludeRandom: true,
+  };
 
-elements.le_liquid_light = {
-	color: "#ffffa8",
-	behavior: [
-		"XX|XX|XX",
-		"M2|DL%0.1 AND RT%0.5|M2 AND BO",
-		"M1|M1|M1",
-	],
-	temp: 40,
-	category: "energy liquids",
-},
+  for (i = 0; i < 4; i++) {
+    elements.life_eater_infected_dirt.burnInto.push(elements.dry_dirt ? "dry_dirt" : "sand");
+  };
 
-elements.liquid_laser = {
-	color: "#ff0000",
-	behavior: [
-		"XX|M2|XX",
-		"M2|DL%0.05 AND RT%0.5|M2 AND BO:1,2,3",
-		"XX|M1|XX",
-	],
-	temp: 40,
-	category: "energy liquids",
-},
+  elements.virus_bomb = {
+    color: "#accc70",
+    behavior: [
+      "XX|EX:16>life_eater_virus|XX",
+      "XX|XX|XX",
+      "XX|EX:16>life_eater_virus AND M1|XX"
+    ],
+    density: 3500,
+    hardness: 0.95,
+    breakInto: "life_eater_virus",
+    tempHigh: 2400,
+    category: "weapons",
+    excludeRandom: true,
+    stateHigh: elements.metal_scrap.stateHigh.concat("life_eater_virus", "life_eater_virus", "life_eater_virus"),
+  };
 
-elements.liquid_electric = {
-	color: "#dddd00",
-	behavior: [
-		"CL%3|CL%3 AND SH|CL%3",
-		"M2%15 AND CL%3 AND SH|SH%3 AND DL%15|M2%15 AND CL%3 AND SH",
-		"M1%15 AND CL%4|M1%50 AND CL%9 AND SH|M1%15 AND CL%4",
-	],
-	charge: 3,
-	category: "energy liquids",
-	state: "solid",
-	density: 44.1,
-},
-
-elements.liquid_radiation = {
-	color: ["#00ff00","#6fff00"],
-	behavior: [
-		"XX|M2%50 AND HT|XX",
-		"M2%50 AND HT|DL%0.2|M2%50 AND HT",
-		"M1%50|M1 AND HT|M1%50",
-	],
-	reactions: {
-		"water": { "elem2":"rad_steam", "chance":0.8 },
-		"steam": { "elem2":"rad_steam", "chance":0.8 },
-		"salt_water": { "elem2":"rad_steam", "chance":0.8 },
-		"sugar_water": { "elem2":"rad_steam", "chance":0.8 },
-		"dirty_water": { "elem2":"rad_steam", "chance":0.8 },
-		"bubble": { "elem2":"rad_steam", "chance":0.8 },
-		"foam": { "elem2":"rad_steam", "chance":0.8 },
-		"ice": { "elem2":"rad_steam", "chance":0.8 },
-		"snow": { "elem2":"rad_steam", "chance":0.8 },
-		"packed_snow": { "elem2":"rad_steam", "chance":0.8 },
-		"slime": { "elem2":"rad_steam", "chance":0.8 },
-		"milk": { "elem2":"cheese", "chance":0.8 },
-		"permafrost": { "elem1":"rad_steam", "elem2":"dirt", "chance":0.8 },
-		"mud": { "elem1":"rad_steam", "elem2":"dirt", "chance":0.8 },
-		"wet_sand": { "elem1":"rad_steam", "elem2":"sand", "chance":0.8 },
-		"clay": { "elem1":"rad_steam", "elem2":"clay_soil", "chance":0.8 },
-		"slaked_lime": { "elem1":"rad_steam", "elem2":"limestone", "chance":0.8 },
-		"rain_cloud": { "elem2":"rad_cloud", "chance":0.8 },
-		"snow_cloud": { "elem2":"rad_cloud", "chance":0.8 },
-		"plant": { "elem2":"straw", "chance":0.8 },
-		"grass": { "elem2":["straw","grass_seed","wheat_seed"], "chance":0.8 },
-		"algae": { "elem2":["mushroom_spore","lichen","yeast"], "chance":0.8 },
-		"mushroom_spore": { "elem2":["lichen","yeast"], "chance":0.8 },
-		"mushroom_cap": { "elem2":["lichen","plant"], "chance":0.8 },
-		"mushroom_stalk": { "elem2":["lichen","yeast"], "chance":0.8 },
-		"mushroom_gill": { "elem2":["lichen","yeast"], "chance":0.8 },
-		"flea": { "elem2":["ash","ant","termite"], "chance":0.8 },
-		"ant": { "elem2":["ash","flea","termite"], "chance":0.8 },
-		"termite": { "elem2":["ash","flea","ant"], "chance":0.8 },
-		"fly": { "elem2":["ash","firefly","bee"], "chance":0.8 },
-		"bee": { "elem2":["ash","firefly","fly"], "chance":0.8 },
-		"firefly": { "elem2":["ash","bee","fly"], "chance":0.8 },
-		"frog": { "elem2":["ash","meat","rotten_meat","cooked_meat"], "chance":0.8 },
-		"fish": { "elem2":["ash","meat","rotten_meat","cooked_meat"], "chance":0.8 },
-		"rat": { "elem2":["ash","meat","rotten_meat","cooked_meat","plague"], "chance":0.8 },
-		"bone": { "elem2":["calcium","calcium","calcium","cancer"], "chance":0.8 },
-		"meat": { "elem2":["ash","rotten_meat","cooked_meat"], "chance":0.8 },
-		"rotten_meat": { "elem2":["ash","meat","cooked_meat"], "chance":0.8 },
-		"cooked_meat": { "elem2":["ash","rotten_meat"], "chance":0.8 },
-		"bamboo": { "elem2":["wood","plant","bamboo_plant"], "chance":0.8 },
-		"bamboo_plant": { "elem2":["wood","plant","bamboo"], "chance":0.8 },
-		"sapling": { "elem2":["wood","plant","tree_branch"], "chance":0.8 },
-		"tree_branch": { "elem2":["wood","plant","sapling"], "chance":0.8 },
-		"grass_seed": { "elem2":["straw","wheat_seed"], "chance":0.8 },
-		"lichen": { "elem2":"algae", "chance":0.8 },
-		"yeast": { "elem2":["algae","mushroom_spore","lichen"], "chance":0.8 },
-		"wheat_seed": { "elem2":["straw","wheat","grass_seed"], "chance":0.8 },
-		"flower_seed": { "elem2":["straw","grass","pistil","petal"], "chance":0.8 },
-		"pistil": { "elem2":["straw","grass","flower_seed","petal"], "chance":0.8 },
-		"petal": { "elem2":["straw","grass","flower_seed","pistil"], "chance":0.8 },
-		"vine": { "elem1":["vine"], "chance":0.8 },
-		"worm": { "elem2":"ash", "chance":0.8 },
-		"corn": { "elem2":"corn_seed", "chance":0.8 },
-		"corn_seed": { "elem2":"corn", "chance":0.8 },
-		"potato": { "elem2":"potato_seed", "chance":0.8 },
-		"potato_seed": { "elem2":"potato", "chance":0.8 },
-		"slug": { "elem2":"slime", "chance":0.8 },
-		"snail": { "elem2":"slime", "chance":0.8 },
-		"cell": { "elem2":"cancer", "chance":0.8 },
-		"blood": { "elem2":["infection","cancer"], "chance":0.8 },
-		"antibody": { "elem2":"cancer", "chance":0.8 },
-		"infection": { "elem2":"cancer", "chance":0.8 },
-		"cancer": { "elem2":null, "chance":0.2 },
-
-	},
-	state: "liquid",
-	density: 4.2,
-	category: "energy liquids",
-},
-
-elements.liquid_explosion = {
-	color: ["#ffb48f","#ffd991","#ffad91"],
-	behavior: [
-		"XX|XX|XX",
-		"M2|EX:10>fire,fire,fire,liquid_explosion,liquid_explosion%0.4 AND DL%0.3|M2",
-		"M1|M1|M1",
-	],
-	temp: 300,
-	category: "energy liquids",
-	state: "liquid",
-	density: 2000,
-	excludeRandom: true,
 }
-
-runAfterLoad(function() {
-	if(enabledMods.includes("mods/fey_and_more.js")) {
-		elements.everfire_liquid = {
-			"name": "everfire liquid",
-			"color": "#06142b",
-			"state": "liquid",
-			"behavior": behaviors.LIQUID,
-			"density": 1290,
-			"burn": 100,
-			"burnTime": 2000,
-			"burnInto": "extinguished_everfire_liquid",
-			"category": "energy liquids",
-			"fireColor": ["#0041a8","#8ab7ff"],
-		},
-		elements.extinguished_everfire_liquid = {
-			"name": "extinguished everfire liquid",
-			"color": "#242d3b",
-			"state": "liquid",
-			"behavior": behaviors.LIQUID,
-			"density": 1290,
-			"fireColor": ["#0041a8","#8ab7ff"],
-			"category": "energy liquids",
-			"hidden": true,
-		},
-		elements.liquid_magic = {
-			"name": "liquid magic",
-			"color": ["#a270ff","#f2d9ff"],
-			"state": "liquid",
-			"behavior": [
-				"M2%50|M2%50|M2%50",
-				"M2|DL%0.2|M2",
-				"M1|M1|M1",
-			],
-			"density": 21,
-			"category": "energy liquids",
-			"reactions": {
-				"water": { "elem1": null, "elem2": "pure_water", },
-				"little_star": { "elem1": "mystic_fire", "elem2": "liquid_mystic_fire", },
-				"cheese": { "elem1": null, "elem2": "moonrock", },
-				"sapling": { "elem1": null, "elem2": "celie_seed", },
-				"old_celie_leaves": { "elem1": null, "elem2": "celie_leaves", },
-				"ketchup": { "elem1": null, "elem2": "enchanted_ketchup", },
-				"tomato_sauce": { "elem1": null, "elem2": "enchanted_ketchup", },
-				"rain_cloud": { "elem1": null, "elem2": "raincloud_cotton", },
-				"snow_cloud": { "elem1": null, "elem2": "snowcloud_cotton", },
-				"cloud": { "elem1": null, "elem2": "cloud_cotton", },
-			},
-		},
-		elements.liquid_mystic_fire = {
-			"name": "liquid mystic fire",
-			"color": ["#5454ff","#2020d4","#5800c4"],
-			"behavior": [
-				"M2%50|M2%50 AND CR:liquid_mystic_fire%10 AND CR:mystic_fire%5|M2%50",
-				"M2 AND CR:liquid_mystic_fire%5|EX:15>liquid_mystic_fire%0.1|M2 AND CR:liquid_mystic_fire%5",
-				"M1|M1|M1",
-			],
-			"temp":8500,
-			"tempChange":-100,
-			"tempLow":8000,
-			"stateLow": "liquid_fire",
-			"category": "energy liquids",
-			"burning": true,
-		},
-		//concoction and essence are already liquid
-		elements.liquid_frostbomb = {
-			color: "#72dfed",
-			behavior: [
-				"XX|XX|XX",
-				"M2|EX:15>frostwind,frostwind,frostwind,liquid_frostbomb%0.4 AND DL%0.2|M2",
-				"M1|M1|M1",
-			],
-			temp: 300,
-			category: "energy liquids",
-			state: "liquid",
-			density: 2000,
-			excludeRandom: true,
-		}
-	}
-});

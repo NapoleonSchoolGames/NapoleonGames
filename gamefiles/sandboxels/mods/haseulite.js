@@ -7,7 +7,6 @@ var doElectricityMod = "mods/doElectricity changes.js";
 var libraryMod = "mods/code_library.js";
 
 if(enabledMods.includes(loonaMod) && enabledMods.includes(fireMod) && enabledMods.includes(runAfterAutogenMod) && enabledMods.includes(explodeAtPlusMod) && enabledMods.includes(doElectricityMod) && enabledMods.includes(libraryMod)) {
-	//move explodeAt to YG Entertainment's dungeon
 
 	oldExplodeAt = explodeAt;
 	explodeAt = explodeAtPlus;
@@ -22,7 +21,7 @@ if(enabledMods.includes(loonaMod) && enabledMods.includes(fireMod) && enabledMod
 		if(!elements[reactionTarget]) {
 			throw new Error(`No such element ${reactionTarget}!`);
 		};
-		if(typeof(newPixel) === "undefined") { //timing issue?
+		if(typeof(newPixel) === "undefined") { 
 			return false;
 		};
 		var newElement = newPixel.element;
@@ -39,13 +38,11 @@ if(enabledMods.includes(loonaMod) && enabledMods.includes(fireMod) && enabledMod
 		var pixel2 = pixel;
 		var pixel1 = newPixel;
 		var r = JSON.parse(JSON.stringify(newInfo.reactions[reactionTarget]));
-		
+
 		if (r.setting && settings[r.setting]===0) {
 			return false;
 		}
-		// r has the attribute "y" which is a range between two y values
-		// r.y example: [10,30]
-		// return false if y is defined and pixel1's y is not in the range
+
 		if (r.tempMin !== undefined && pixel1.temp < r.tempMin) {
 			return false;
 		}
@@ -67,11 +64,11 @@ if(enabledMods.includes(loonaMod) && enabledMods.includes(fireMod) && enabledMod
 			};
 		};
 		if (r.elem1 !== undefined) {
-			// if r.elem1 is an array, set elem1 to a random element from the array, otherwise set it to r.elem1
+
 			if (Array.isArray(r.elem1)) {
 				var elem1 = r.elem1[Math.floor(Math.random() * r.elem1.length)];
 			} else { var elem1 = r.elem1; }
-			
+
 			if (elem1 == null) {
 				deletePixel(pixel1.x,pixel1.y);
 			}
@@ -81,20 +78,20 @@ if(enabledMods.includes(loonaMod) && enabledMods.includes(fireMod) && enabledMod
 		}
 		if (r.charge1) { pixel1.charge = r.charge1; }
 		if (r.temp1) { pixel1.temp += r.temp1; pixelTempCheck(pixel1); }
-		if (r.color1) { // if it's a list, use a random color from the list, else use the color1 attribute
+		if (r.color1) { 
 			pixel1.color = pixelColorPick(pixel1, Array.isArray(r.color1) ? r.color1[Math.floor(Math.random() * r.color1.length)] : r.color1);
 		}
-		if (r.attr1) { // add each attribute to pixel1
+		if (r.attr1) { 
 			for (var key in r.attr1) {
 				pixel1[key] = r.attr1[key];
 			}
 		}
 		if (r.charge2) { pixel2.charge = r.charge2; }
 		if (r.temp2) { pixel2.temp += r.temp2; pixelTempCheck(pixel2); }
-		if (r.color2) { // if it's a list, use a random color from the list, else use the color2 attribute
+		if (r.color2) { 
 			pixel2.color = pixelColorPick(pixel2, Array.isArray(r.color2) ? r.color2[Math.floor(Math.random() * r.color2.length)] : r.color2);
 		}
-		if (r.attr2) { // add each attribute to pixel2
+		if (r.attr2) { 
 			for (var key in r.attr2) {
 				pixel2[key] = r.attr2[key];
 			}
@@ -122,7 +119,7 @@ if(enabledMods.includes(loonaMod) && enabledMods.includes(fireMod) && enabledMod
 			throw new Error(`Nonexistent element ${name}`);
 		};
 		var info = elements[name];
-		//console.log(`${name} (${JSON.stringify(elements[name])})`);
+
 		if(typeof(info.state) === "undefined") {
 			var state = null;
 		} else {
@@ -152,16 +149,16 @@ if(enabledMods.includes(loonaMod) && enabledMods.includes(fireMod) && enabledMod
 		if(category.includes("mudstone")) {
 			include = true;
 		};
-		//console.log(include);
+
 		return include;
 	};
-	
+
 	function heejiniteHeatCriteria(name) {
 		if(typeof(elements[name]) !== "object") {
 			throw new Error(`Nonexistent element ${name}`);
 		};
 		var info = elements[name];
-		//console.log(`${name} (${JSON.stringify(elements[name])})`);
+
 		if(typeof(info.tempLow) === "undefined") {
 			return false;
 		};
@@ -176,7 +173,7 @@ if(enabledMods.includes(loonaMod) && enabledMods.includes(fireMod) && enabledMod
 			throw new Error(`Nonexistent element ${name}`);
 		};
 		var info = elements[name];
-		//console.log(`${name} (${JSON.stringify(elements[name])})`);
+
 		if(typeof(info.state) === "undefined") {
 			var state = null;
 		} else {
@@ -203,11 +200,9 @@ if(enabledMods.includes(loonaMod) && enabledMods.includes(fireMod) && enabledMod
 		if(category.includes("mudstone")) {
 			include = true;
 		};
-		//console.log(include);
+
 		return include;
 	};
-
-	//it doesn't want to acknowledge spoutCriteria, so...
 
 	runAfterAutogen(function() {
 		elements.loona.stateHigh = ["molten_loona","rock","rock","rock","sulfur_gas","sulfur_gas","molten_haseulite","molten_loona","rock","rock","rock","sulfur_gas","sulfur_gas","molten_jinsoulite","molten_loona","rock","rock","rock","sulfur_gas","sulfur_gas","molten_heejinite"];
@@ -257,10 +252,10 @@ if(enabledMods.includes(loonaMod) && enabledMods.includes(fireMod) && enabledMod
 		blood: {value: 0.90625, remainder: "dna"},
 		infection: {value: 0.90625, remainder: "dna"},
 		packed_snow: {value: 0.90625},
-		slime: {value: 0.9609375, remainder: "salt"}, //:eggTF:
+		slime: {value: 0.9609375, remainder: "salt"}, 
 		slush: {value: 0.9609375},
 		ice: {value: 0.98046875},
-		salt_water: {value: 1, remainder: "salt"}, //should be 0.965 but simplified here
+		salt_water: {value: 1, remainder: "salt"}, 
 		dirty_water: {value: 1, remainder: ["ash","dust","carbon_dioxide","ash","dust","carbon_dioxide","infection"]},
 		sugar_water: {value: 1, remainder: "sugar"},
 		seltzer: {value: 1, remainder: "carbon_dioxide"},
@@ -275,7 +270,7 @@ if(enabledMods.includes(loonaMod) && enabledMods.includes(fireMod) && enabledMod
 		water_bomb_7: 1480,
 		water_bomb_8: 1901.5,
 		water_bomb_9: 2373,
-		water_bomb_10: 2898, //average rates from in-game simulation since I can't come up with an exponential function
+		water_bomb_10: 2898, 
 		water_bomb_bomb: 59*59,
 		water_bomb_bomb_2: 59*164.5,
 		water_bomb_bomb_3: 59*322.5,
@@ -285,7 +280,7 @@ if(enabledMods.includes(loonaMod) && enabledMods.includes(fireMod) && enabledMod
 		water_bomb_bomb_7: 59*1480,
 		water_bomb_bomb_8: 59*1901.5,
 		water_bomb_bomb_9: 59*2373,
-		water_bomb_bomb_10: 59*2898, //creates up to around 2,898 water bombs, each of which theoretically create up to around 59 water
+		water_bomb_bomb_10: 59*2898, 
 		water_bomb_bomb: 59*59,
 		water_bomb_2_bomb: 164.5*59,
 		water_bomb_3_bomb: 322.5*59,
@@ -295,66 +290,10 @@ if(enabledMods.includes(loonaMod) && enabledMods.includes(fireMod) && enabledMod
 		water_bomb_7_bomb: 1480*59,
 		water_bomb_8_bomb: 1901.5*59,
 		water_bomb_9_bomb: 2373*59,
-		water_bomb_10_bomb: 2898*59,  //creates up to around 59 water bombs, each of which theoretically create up to around 2,898 water
-		water_bomb_10_bomb_10: 2898*2898,  //skipping to the funny
+		water_bomb_10_bomb: 2898*59,  
+		water_bomb_10_bomb_10: 2898*2898,  
 		water_bomb_cloud: 30,
 	};
-
-	/*function customStaining(pixel,customColorRgb,stainOverride=null) {
-		if (settings["stainoff"]) { return }
-		var stain = (stainOverride !== null ? stainOverride : elements[pixel.element].stain);
-		if (stain > 0) {
-			var newColor = customColorRgb.match(/\d+/g);
-		}
-		else {
-			var newColor = null;
-		}
-
-		for (var i = 0; i < adjacentCoords.length; i++) {
-			var x = pixel.x+adjacentCoords[i][0];
-			var y = pixel.y+adjacentCoords[i][1];
-			if (!isEmpty(x,y,true)) {
-				var newPixel = pixelMap[x][y];
-				if (elements[pixel.element].ignore && elements[pixel.element].ignore.indexOf(newPixel.element) !== -1) {
-					continue;
-				}
-				if ((elements[newPixel.element].id !== elements[pixel.element].id || elements[newPixel.element].stainSelf) && (solidStates[elements[newPixel.element].state] || elements[newPixel.element].id === elements[pixel.element].id)) {
-					if (Math.random() < Math.abs(stain)) {
-						if (stain < 0) {
-							if (newPixel.origColor) {
-								newColor = newPixel.origColor;
-							}
-							else { continue; }
-						}
-						else if (!newPixel.origColor) {
-							newPixel.origColor = newPixel.color.match(/\d+/g);
-						}
-						// if newPixel.color doesn't start with rgb, continue
-						if (!newPixel.color.match(/^rgb/)) { continue; }
-						// parse rgb color string of newPixel rgb(r,g,b)
-						var rgb = newPixel.color.match(/\d+/g);
-						if (elements[pixel.element].stainSelf && elements[newPixel.element].id === elements[pixel.element].id) {
-							// if rgb and newColor are the same, continue
-							if (rgb[0] === newColor[0] && rgb[1] === newColor[1] && rgb[2] === newColor[2]) { continue; }
-							var avg = [];
-							for (var j = 0; j < rgb.length; j++) {
-								avg[j] = Math.round((rgb[j]*(1-Math.abs(stain))) + (newColor[j]*Math.abs(stain)));
-							}
-						}
-						else {
-							// get the average of rgb and newColor, more intense as stain reaches 1 
-							var avg = [];
-							for (var j = 0; j < rgb.length; j++) {
-								avg[j] = Math.floor((rgb[j]*(1-Math.abs(stain))) + (newColor[j]*Math.abs(stain)));
-							}
-						}
-						// set newPixel color to avg
-						newPixel.color = "rgb("+avg.join(",")+")";
-					}
-				}
-			}
-		}
-	}*/
 
 	function valueSpreading(pixel,whitelist=null) {
 		var randomNeighborOffset = adjacentCoords[Math.floor(Math.random() * adjacentCoords.length)];
@@ -391,13 +330,13 @@ if(enabledMods.includes(loonaMod) && enabledMods.includes(fireMod) && enabledMod
 				var otherElement = otherPixel.element;
 				var otherInfo = elements[otherElement];
 				if(valueObject[otherElement]) {
-					//console.log(`${otherElement} in your area`)
+
 					if(typeof(otherPixel) === "undefined" || isEmpty(fX,fY,true)) {
 						console.log(`nope`)
 						return false;
 					};
 					var ValueData = valueObject[otherElement];
-					//console.log(ValueData.toString())
+
 					if(typeof(ValueData) == "object") {
 						var tempMin = ValueData.tempMin ?? null;
 						if(pixel.temp < tempMin) {
@@ -448,7 +387,7 @@ if(enabledMods.includes(loonaMod) && enabledMods.includes(fireMod) && enabledMod
 		if(pixel.oldColor === null) { pixel.oldColor = pixel.color };
 		if(isNaN(pixel.value)) { pixel.value = 0 };
 		pixel.color = lightenColor(pixel.oldColor,pixel.value / 3);
-		
+
 		if(pixel.value >= 350) {
 			var coldBoomChance = Math.max(0.008 * ((pixel.value - 350) / 100), 0.001);
 			if(Math.random() < coldBoomChance) {
@@ -466,17 +405,10 @@ if(enabledMods.includes(loonaMod) && enabledMods.includes(fireMod) && enabledMod
 		},
 		behavior: behaviors.WALL,
 		tick: function(pixel) { haseulitoidTick(pixel) },
-		excludeVelocity: true, //wall shouldn't move
+		excludeVelocity: true, 
 		tempHigh: 1757,
 		onExplosionBreakOrSurvive: function(pixel,x,y,radius) {
-			/*power is always radius/10
-				r 5: value 7
-				r 10: value 14
-				r 15: value 28 
-				r 20: value 56 
-				r 25: value 112 
-				r 30: value 224 
-			*/
+
 			pixel.value += (2**(((radius) / 5) - 1) * 7);
 		},
 		category: "solids",
@@ -533,12 +465,12 @@ if(enabledMods.includes(loonaMod) && enabledMods.includes(fireMod) && enabledMod
 							if(isEmpty(fIX,fIY,false)) {
 								createPixel("cold_fire",fIX,fIY);
 								otherPixel.value -= 3;
-							} else { //if the pixel to place isn't empty
-								if(!outOfBounds(fIX,fIY)) { //if it isn't OoB
-									if(pixelMap[fIX][fIY].element !== "cold_fire") { //if it isn't cold fire
+							} else { 
+								if(!outOfBounds(fIX,fIY)) { 
+									if(pixelMap[fIX][fIY].element !== "cold_fire") { 
 										break;
 									};
-								} else { //if it is OoB
+								} else { 
 									break;
 								};
 							};
@@ -550,7 +482,7 @@ if(enabledMods.includes(loonaMod) && enabledMods.includes(fireMod) && enabledMod
 			};
 			return true;
 		},
-		excludeVelocity: true, //wall shouldn't move
+		excludeVelocity: true, 
 		tempHigh: elements.steel.tempHigh,
 		stateHigh: ["molten_steel","haseulite_powder"],
 		breakInto: ["metal_scrap","haseulite_powder"],
@@ -573,14 +505,7 @@ if(enabledMods.includes(loonaMod) && enabledMods.includes(fireMod) && enabledMod
 		behavior: behaviors.POWDER,
 		tick: function(pixel) { haseulitoidTick(pixel) },
 		onExplosionBreakOrSurvive: function(pixel,x,y,radius) {
-			/*power is always radius/10
-				r 5: value 7
-				r 10: value 14
-				r 15: value 28 
-				r 20: value 56 
-				r 25: value 112 
-				r 30: value 224 
-			*/
+
 			pixel.value += (2**(((radius) / 5) - 1) * 7);
 		},
 		stateHigh: "molten_haseulite",
@@ -598,17 +523,10 @@ if(enabledMods.includes(loonaMod) && enabledMods.includes(fireMod) && enabledMod
 		properties: {
 			oldColor: null
 		},
-		behavior: behaviors.LIQUID, //fire creation is problematic due to smoke cooling
+		behavior: behaviors.LIQUID, 
 		tick: function(pixel) { haseulitoidTick(pixel) },
 		onExplosionBreakOrSurvive: function(pixel,x,y,radius) {
-			/*power is always radius/10
-				r 5: value 7
-				r 10: value 14
-				r 15: value 28 
-				r 20: value 56 
-				r 25: value 112 
-				r 30: value 224 
-			*/
+
 			pixel.value += (2**(((radius) / 5) - 1) * 7);
 		},
 		density: 7214,
@@ -627,14 +545,7 @@ if(enabledMods.includes(loonaMod) && enabledMods.includes(fireMod) && enabledMod
 		},
 		tick: function(pixel) { haseulitoidTick(pixel) },
 		onExplosionBreakOrSurvive: function(pixel,x,y,radius) {
-			/*power is always radius/10
-				r 5: value 7
-				r 10: value 14
-				r 15: value 28 
-				r 20: value 56 
-				r 25: value 112 
-				r 30: value 224 
-			*/
+
 			pixel.value += (2**(((radius) / 5) - 1) * 7);
 		},
 		density: 0.289,
@@ -644,7 +555,7 @@ if(enabledMods.includes(loonaMod) && enabledMods.includes(fireMod) && enabledMod
 	};
 
 	if(enabledMods.includes("mods/metals.js")) {
-		elements.hanichrite = { //the names nickel, chrome, and haseulite do not mix
+		elements.hanichrite = { 
 			color: ["#dde6bc", "#ebf2ef", "#e8fab1"],
 			behavior: behaviors.WALL,
 			tempHigh: 1560,
@@ -687,11 +598,6 @@ if(enabledMods.includes(loonaMod) && enabledMods.includes(fireMod) && enabledMod
 		};
 	};
 
-	/*
-	var shimmeringColor = convertHslObjects(hslColorStringToObject(`hsl(${(pixelTicks / 2) % 360},100%,50%)`,"rgb"));
-	customStaining(pixel,shimmeringColor,0.2);
-	*/
-
 	function heejinitoidTick(pixel) {
 		if(pixel.oldColor === null) { pixel.oldColor = pixel.color };
 		if(pixel.oldColor === undefined) { pixel.oldColor = pixelColorPick(pixel) };
@@ -728,7 +634,7 @@ if(enabledMods.includes(loonaMod) && enabledMods.includes(fireMod) && enabledMod
 		},
 		behavior: behaviors.WALL,
 		tick: function(pixel) { heejinitoidTick(pixel) },
-		excludeVelocity: true, //wall shouldn't move
+		excludeVelocity: true, 
 		tempHigh: 837,
 		category: "solids",
 		state: "solid",
@@ -747,7 +653,7 @@ if(enabledMods.includes(loonaMod) && enabledMods.includes(fireMod) && enabledMod
 		},
 		behavior: behaviors.POWDER,
 		tick: function(pixel) { heejinitoidTick(pixel) },
-		excludeVelocity: true, //wall shouldn't move
+		excludeVelocity: true, 
 		tempHigh: 837,
 		hidden: true,
 		stateHigh: "molten_heejinite",
@@ -819,10 +725,10 @@ if(enabledMods.includes(loonaMod) && enabledMods.includes(fireMod) && enabledMod
 		if(move1Spots.length > 0) {
 			var randomMove1 = move1Spots[Math.floor(Math.random() * move1Spots.length)];
 			if(!tryMove(pixel, pixel.x+randomMove1[0], pixel.y+randomMove1[1])) {
-				//console.log((pixel.x+randomMove1[0]) + " " + (pixel.y+randomMove1[1]))
+
 				var newPixel = null;
 				if(!outOfBounds(pixel.x+randomMove1[0],pixel.y+randomMove1[1])) {
-					newPixel = pixelMap[pixel.x+randomMove1[0]][pixel.y+randomMove1[1]]; //newPixel is AAA
+					newPixel = pixelMap[pixel.x+randomMove1[0]][pixel.y+randomMove1[1]]; 
 				};
 				if(outOfBounds(pixel.x+randomMove1[0],pixel.y+randomMove1[1]) || !reactionStealerImmutableElem2(pixel,newPixel,"water",true,2)) {
 					if(move2Spots.length > 0) {
@@ -830,7 +736,7 @@ if(enabledMods.includes(loonaMod) && enabledMods.includes(fireMod) && enabledMod
 						if(!tryMove(pixel, pixel.x+randomMove2[0], pixel.y+randomMove2[1])) {
 							var newPixel = null;
 							if(!outOfBounds(pixel.x+randomMove1[0],pixel.y+randomMove1[1])) {
-								newPixel = pixelMap[pixel.x+randomMove1[0]][pixel.y+randomMove1[1]]; //newPixel is AAA
+								newPixel = pixelMap[pixel.x+randomMove1[0]][pixel.y+randomMove1[1]]; 
 							};
 							if(newPixel !== null) { reactionStealerImmutableElem2(pixel,newPixel,"water",true,2) };
 						};
@@ -854,7 +760,7 @@ if(enabledMods.includes(loonaMod) && enabledMods.includes(fireMod) && enabledMod
 		};
 		return true;
 	};
-	
+
 	function jinsouliteSolidWaterSideReactions(pixel) {
 		var randomNeighborOffset = adjacentCoords[Math.floor(Math.random() * adjacentCoords.length)];
 		var rfX = pixel.x+randomNeighborOffset[0];
@@ -870,7 +776,7 @@ if(enabledMods.includes(loonaMod) && enabledMods.includes(fireMod) && enabledMod
 			};
 			var rOtherElement = pixel2.element;
 			var waterReactions = elements.water.reactions;
-			
+
 			if(rOtherElement === pixel.element) {
 				return false;
 			};
@@ -880,9 +786,7 @@ if(enabledMods.includes(loonaMod) && enabledMods.includes(fireMod) && enabledMod
 				if (r.setting && settings[r.setting]===0) {
 					return false;
 				}
-				// r has the attribute "y" which is a range between two y values
-				// r.y example: [10,30]
-				// return false if y is defined and pixel1's y is not in the range
+
 				if (r.tempMin !== undefined && pixel1.temp < r.tempMin) {
 					return false;
 				}
@@ -900,10 +804,10 @@ if(enabledMods.includes(loonaMod) && enabledMods.includes(fireMod) && enabledMod
 				}
 				if (r.charge1) { pixel1.charge = r.charge1; }
 				if (r.temp1) { pixel1.temp += r.temp1; pixelTempCheck(pixel1); }
-				if (r.color1) { // if it's a list, use a random color from the list, else use the color1 attribute
+				if (r.color1) { 
 					pixel1.color = pixelColorPick(pixel1, Array.isArray(r.color1) ? r.color1[Math.floor(Math.random() * r.color1.length)] : r.color1);
 				}
-				if (r.attr1) { // add each attribute to pixel1
+				if (r.attr1) { 
 					for (var key in r.attr1) {
 						pixel1[key] = r.attr1[key];
 					}
@@ -912,9 +816,9 @@ if(enabledMods.includes(loonaMod) && enabledMods.includes(fireMod) && enabledMod
 				if (elem1 !== undefined && elem1 instanceof Array) {
 					elem1 = elem1[Math.floor(Math.random() * elem1.length)];
 				};
-				
+
 				if (r.elem2 !== undefined) {
-					// if r.elem2 is an array, set elem2 to a random element from the array, otherwise set it to r.elem2
+
 					if (Array.isArray(r.elem2)) {
 						var elem2 = r.elem2[Math.floor(Math.random() * r.elem2.length)];
 					} else { var elem2 = r.elem2; }
@@ -928,10 +832,10 @@ if(enabledMods.includes(loonaMod) && enabledMods.includes(fireMod) && enabledMod
 				}
 				if (r.charge2) { pixel2.charge = r.charge2; }
 				if (r.temp2) { pixel2.temp += r.temp2; pixelTempCheck(pixel2); }
-				if (r.color2) { // if it's a list, use a random color from the list, else use the color2 attribute
+				if (r.color2) { 
 					pixel2.color = pixelColorPick(pixel2, Array.isArray(r.color2) ? r.color2[Math.floor(Math.random() * r.color2.length)] : r.color2);
 				}
-				if (r.attr2) { // add each attribute to pixel2
+				if (r.attr2) { 
 					for (var key in r.attr2) {
 						pixel2[key] = r.attr2[key];
 					}
@@ -948,7 +852,7 @@ if(enabledMods.includes(loonaMod) && enabledMods.includes(fireMod) && enabledMod
 		if(pixel.oldColor === null) { pixel.oldColor = pixel.color };
 		if(isNaN(pixel.value)) { pixel.value = 0 };
 		pixel.color = changeSaturation(pixel.oldColor,pixel.value / 3,"subtract","rgb")
-		
+
 		if(pixel.value > 1) {
 			if(Math.random() < Math.min((pixel.value / 200),0.5)) {
 				var randomNeighborOffset = adjacentCoords[Math.floor(Math.random() * adjacentCoords.length)];
@@ -961,16 +865,7 @@ if(enabledMods.includes(loonaMod) && enabledMods.includes(fireMod) && enabledMod
 					pixel.value--;
 				};
 			};
-			/*for(g = 0; g < adjacentCoords.length; g++) {
-				var oX = adjacentCoords[g][0];
-				var oY = adjacentCoords[g][1];
-				var fX = pixel.x+oX;
-				var fY = pixel.y+oY;
-				if(isEmpty(fX,fY,false)) {
-					createPixel("water",fX,fY);
-					pixel.value--;
-				};
-			};*/
+
 		};
 	}
 
@@ -1092,19 +987,17 @@ if(enabledMods.includes(loonaMod) && enabledMods.includes(fireMod) && enabledMod
 		hardness: 1,
 		conduct: 0.19,
 	};
-	
-	//apples (used for yvesite)
 
 	appleAttachWhitelist = ["wood","tree_branch"];
 
 	elements.apple = {
 		color: ["#ad2333", "#b51616", "#d6782f", "#e3c634", "#99de31"],
 		tick: function(pixel) {
-			if(pixel.attached) { //only attaches upwards
+			if(pixel.attached) { 
 				if(isEmpty(pixel.x,pixel.y-1,true)) {
 					pixel.attached = false;
 				};
-			} else { //Move if not attached
+			} else { 
 				if (!tryMove(pixel, pixel.x, pixel.y+1)) {
 					if(Math.random() < 0.3) {
 						if (Math.random() < 0.5) {
@@ -1120,24 +1013,24 @@ if(enabledMods.includes(loonaMod) && enabledMods.includes(fireMod) && enabledMod
 				};
 			};
 			doDefaults(pixel);
-			var shouldSpoil = true; //spoil by default
-			if(pixel.attached) { //if it's attached
-				if(!isEmpty(pixel.x,pixel.y-1,true)) { //if the attachment coords are a pixel and not OOB
+			var shouldSpoil = true; 
+			if(pixel.attached) { 
+				if(!isEmpty(pixel.x,pixel.y-1,true)) { 
 					var attachPixel = pixelMap[pixel.x][pixel.y-1];
 					var attachElement = attachPixel.element;
-					if(appleAttachWhitelist.includes(attachElement)) {//if the element is a whitelisted "don't spoil" element
-						shouldSpoil = false; //then don't spoil
+					if(appleAttachWhitelist.includes(attachElement)) {
+						shouldSpoil = false; 
 					};
 				};
 			};
-			if(shouldSpoil) { //spoil if not attached
-				if(pixel.temp > -18 && pixel.temp <= 4) { //(no spoiling below -18C)
+			if(shouldSpoil) { 
+				if(pixel.temp > -18 && pixel.temp <= 4) { 
 					pixel.spoilage += Math.max(Math.min(scale(pixel.temp,-18,4,0,9),9),0)
 				} else if(pixel.temp > 4) {
 					pixel.spoilage += Math.max(Math.min(scale(pixel.temp,4,20,9,30),40),0)
 				};
 			};
-			if(pixel.spoilage > 14400) { //3600 = 120 ticks at 20C
+			if(pixel.spoilage > 14400) { 
 				if(Math.random() < 0.05) {
 					changePixel(pixel,"rotten_apple");
 				};
@@ -1175,8 +1068,6 @@ if(enabledMods.includes(loonaMod) && enabledMods.includes(fireMod) && enabledMod
 		tempHigh: 200,
 		stateHigh: ["steam", "ash"],
 	};
-
-	//Yvesite
 
 	var yvesiteAppleSpots = [[-1, 1], [0, 1], [1, 1]];
 	var yvesitePowderAppleSpots = [[-1, 0], [0, -1], [1, 0]];
@@ -1243,7 +1134,7 @@ if(enabledMods.includes(loonaMod) && enabledMods.includes(fireMod) && enabledMod
 		breakInto: "yvesite_powder",
 		conduct: 0.84,
 	};
-	
+
 	elements.molten_yvesite = {
 		color: ["#e81554", "#c90842", "#db4d70", "#cf2b54"],
 		fireColor: ["#b5103f", "#ab3254", "#cc2157", "#ba0936"],
@@ -1274,8 +1165,6 @@ if(enabledMods.includes(loonaMod) && enabledMods.includes(fireMod) && enabledMod
 	};
 
 	elements.fly.reactions.rotten_apple = { "elem2":null, chance:0.15, func:behaviors.FEEDPIXEL };
-	
-	//Vivite
 
 	elements.vivite = {
 		color: ["#ffb5ee", "#fc9fe0", "#fcd9fb"],
@@ -1372,9 +1261,9 @@ if(enabledMods.includes(loonaMod) && enabledMods.includes(fireMod) && enabledMod
 		breakInto: "vivite_powder",
 		conduct: 0.89,
 	};
-	
+
 	elements.smog.stateLow = ["water","dirty_water"];
-	
+
 	var wateroids = Object.keys(elements).filter(
 		function(name) {
 			return (
@@ -1385,37 +1274,26 @@ if(enabledMods.includes(loonaMod) && enabledMods.includes(fireMod) && enabledMod
 			)
 		}
 	);
-	
-	/*Object.keys(elements).filter(
-		function(elem) {
-			return (
-				!wateroids.includes(elem) && (
-					wateroids.includes(elements[elem].stateHigh) ||
-					wateroids.includes(elements[elem].stateLow)
-				)
-			)
-		}
-	);*/
-	
+
 	for(var i = 0; i < wateroids.length; i++) {
 		if(elements[wateroids[i]]) { elements[wateroids[i]].noViviteSlag = true };
 	};
-	
+
 	function doViviteSlag(pixel,target) {
-		if(!target) { //No pixel
-			return false;
-		};
-		
-		var newElement = target.element;
-		if(newElement.includes("vivite")) { //Is vivite
+		if(!target) { 
 			return false;
 		};
 
-		if(elements[pixel.element].reactions?.[newElement]) { //Pre-existing reaction
+		var newElement = target.element;
+		if(newElement.includes("vivite")) { 
 			return false;
 		};
-		
-		if(elements[newElement].noViviteSlag) { //Excluded
+
+		if(elements[pixel.element].reactions?.[newElement]) { 
+			return false;
+		};
+
+		if(elements[newElement].noViviteSlag) { 
 			return false;
 		};
 
@@ -1427,14 +1305,14 @@ if(enabledMods.includes(loonaMod) && enabledMods.includes(fireMod) && enabledMod
 		if(Math.random() < 1/3) { changePixel(pixel,"molten_vivite_slag",false) };
 		return true;
 	};
-	
+
 	elements.molten_vivite = {
 		color: ["#f7a6e5", "#fa70d1", "#f0bbf2"],
 		colorOn: ["#ff63ac", "#ff21bd", "#e81af0"],
 		fireColor: ["#ff66ba", "#ff85ef", "#ff99f7"],
 		tick: function(pixel) {
 			var info = elements[pixel.element];
-			
+
 			if(Math.random() < 0.022 && exposedToAir(pixel)) {
 				changePixel(pixel,pixel.temp > 7315.27 ? "molten_vivite_oxide" : "vivite_oxide_powder",false)
 				pixel.temp += 0.1;
@@ -1449,13 +1327,13 @@ if(enabledMods.includes(loonaMod) && enabledMods.includes(fireMod) && enabledMod
 					newFire.temp = pixel.temp;
 				};
 			};
-			
-			var viscosityMoveChance = ((Math.random()*100) < 100 / ((info.viscosity ?? 1) ** 0.25)); //returns true if doing m2
+
+			var viscosityMoveChance = ((Math.random()*100) < 100 / ((info.viscosity ?? 1) ** 0.25)); 
 
 			var move1Spots = viscosityMoveChance ? [[-1,1],[0,1],[1,1]] : [[0,1]];
 
 			var move1Offset = move1Spots[Math.floor(Math.random() * move1Spots.length)];
-			
+
 			if(!tryMove(pixel, pixel.x + move1Offset[0], pixel.y + move1Offset[1])) {
 				var newPixel = pixelMap[pixel.x + move1Offset[0]]?.[pixel.y + move1Offset[1]];
 				if(newPixel) {
@@ -1465,9 +1343,7 @@ if(enabledMods.includes(loonaMod) && enabledMods.includes(fireMod) && enabledMod
 
 				var move2Offset = move2Spots[Math.floor(Math.random() * move2Spots.length)];
 
-				//console.log(info.viscosity);
-
-				var viscosityMoveChance = ((Math.random()*100) < 100 / ((info.viscosity ?? 1) ** 0.25)); //returns true if doing m2
+				var viscosityMoveChance = ((Math.random()*100) < 100 / ((info.viscosity ?? 1) ** 0.25)); 
 
 				if(viscosityMoveChance) {
 					if(!tryMove(pixel, pixel.x + move2Offset[0], pixel.y + move2Offset[1])) {
@@ -1491,7 +1367,7 @@ if(enabledMods.includes(loonaMod) && enabledMods.includes(fireMod) && enabledMod
 		stateLow: "vivite",
 		conduct: 1,
 		stain: 0.03,
-		behavior: behaviors.WALL, //placeholder to prevent an auto-behaviors.MOLTEN process
+		behavior: behaviors.WALL, 
 	};
 
 	elements.vivite_slag = {
@@ -1591,7 +1467,7 @@ if(enabledMods.includes(loonaMod) && enabledMods.includes(fireMod) && enabledMod
 		temp: 8000,
 		tempHigh: 15500,
 	};
-	
+
 	elements.vivite_oxide_gas = {
 		reactions: {
 			"carbon_monoxide": { elem1: "vivite", elem2: "carbon_dioxide", tempMin: 543, chance: 0.03 },
@@ -1627,7 +1503,7 @@ if(enabledMods.includes(loonaMod) && enabledMods.includes(fireMod) && enabledMod
 		hardness: 1,
 		conduct: 1,
 	};
-	
+
 	runAfterLoad(function() {
 		if(elements.carbon_monoxide) {
 			elements.carbon_monoxide.reactions ??= {};
@@ -1637,7 +1513,7 @@ if(enabledMods.includes(loonaMod) && enabledMods.includes(fireMod) && enabledMod
 			elements.carbon_monoxide.reactions.vivite_oxide_gas = { elem1: "carbon_dioxide", elem2: "vivite_gas", tempMin: 543, chance: 0.03 };
 		}
 	});
-	
+
 	runAfterLoad(function() {
 		for(key in elements.water.reactions) {
 			var value = JSON.parse(JSON.stringify(elements.water.reactions[key]));
@@ -1648,7 +1524,7 @@ if(enabledMods.includes(loonaMod) && enabledMods.includes(fireMod) && enabledMod
 				value.elem2 = value.elem1;
 			};
 			delete value.elem1;
-			
+
 			var movableJinsoulitoids = ["jinsoulite_powder","molten_jinsoulite","jinsoulite_gas"];
 			for(j = 0; j < movableJinsoulitoids.length; j++) {
 				var jinsoulitoid = movableJinsoulitoids[j];

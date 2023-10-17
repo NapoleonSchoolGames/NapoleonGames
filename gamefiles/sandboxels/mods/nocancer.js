@@ -4,6 +4,6 @@ elements.cancer.behavior = [
   "XX|XX|XX"
 ]
 elements.cancer.color = "#000000";
-window.addEventListener("load", ()=>{
-  if(!settings.cheerful)document.getElementById("elementButton-cancer").remove();
+window.addEventListener("load", () => {
+  if (!settings.cheerful) document.getElementById("elementButton-cancer").remove();
 })

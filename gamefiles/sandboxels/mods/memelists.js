@@ -1,15 +1,15 @@
-window.addEventListener("load", ()=>{
+window.addEventListener("load", () => {
   let list = document.createElement("ul");
   let eleButtons = document.getElementsByClassName("elementButton");
-  [...eleButtons].forEach(button =>{
+  [...eleButtons].forEach(button => {
     button.style.display = "none";
   });
   document.getElementById("categoryControls").style.display = "none";
-  Object.keys(elements).forEach(ele=>{
+  Object.keys(elements).forEach(ele => {
     let li = document.createElement("li");
     li.innerHTML = elements[ele].alias || ele;
     list.appendChild(li);
-    li.onclick = ()=>{
+    li.onclick = () => {
       selectElement(ele);
     }
   });

@@ -1,8 +1,7 @@
 function planetCrackerHeat(pixel,x,y,radius,fire,smoke,power,damage) {
-	//console.log(`Radius: ${radius}\nPower: ${power}\nPixel: (${pixel.x},${pixel.y})\nDamage: ${damage}`);
-	//console.log(`Expected temperature increase for pixel at (${pixel.x},${pixel.y}): ${800 * ((1 + (7 * damage)) ** 2) * ((power ** 2) * 1.5)}`);
-	var reversedCloseness = ((radius / 6) ** 0.5) - 1; //mathematically inaccurate but properly correlated
-	
+
+	var reversedCloseness = ((radius / 6) ** 0.5) - 1; 
+
 	pixel.temp += 500 * ((reversedCloseness * 2) + 1);
 	if(pixel.vx) {
 		pixel.vx *= 2;
@@ -62,7 +61,6 @@ elements.planet_cracker = {
 			var pixelDistanceFromBottom = height - pixel.y;
 			var counterDistanceFromBottom = height - (pixel.y + pixel.counter);
 			var closenessToBottom = 1 - (counterDistanceFromBottom / pixelDistanceFromBottom);
-			//console.log(closenessToBottom);
 
 			var finalRadius = Math.round(((1 + closenessToBottom) ** 2) * 6);
 

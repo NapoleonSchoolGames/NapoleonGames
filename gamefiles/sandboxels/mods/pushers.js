@@ -15,7 +15,7 @@ elements.up_pusher = {
 				};
 			};
 		};
-		
+
 		doDefaults(pixel);
 	},
 	category: "machines",
@@ -147,7 +147,7 @@ elements.up_e_pusher = {
 			};
 			pixel.pushTime--;
 		};
-		
+
 		doDefaults(pixel);
 	},
 	category: "machines",

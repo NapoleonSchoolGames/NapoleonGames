@@ -2,8 +2,6 @@ var awaitingReload = [];
 
 function updateModManager() {
     const modManager = document.getElementById("modManager");
-    // make the title a bit better
-    // modManager.getElementsByClassName("menuTitle").item(0).innerHTML = '<span class="menuTitle">Mod Manager</span>';
     document.getElementById("modManagerUrl").remove();
     const button = document.createElement("button");
     button.id = "modListOpen";
@@ -43,7 +41,6 @@ function addModList() {
     modListUl.style.overflowY = "scroll";
     modList.appendChild(modListUl);
     parent.appendChild(modList);
-    // add the modManagerUrl back, on a different screen
     const modManagerUrl = document.createElement("input");
     modManagerUrl.id = "modManagerUrl";
     modManagerUrl.type = "text";
@@ -66,7 +63,6 @@ function addModList() {
 
 function updateModList() {
     const modList = document.getElementById("modListUl");
-    // fetch all the mods from github
     fetch("https://api.github.com/repos/R74nCom/sandboxels/git/trees/main?recursive=1").then(res => res.json())
     .then(res => {
         res.tree.filter(f => f.path.startsWith("mods/")).map(f => f.path).forEach(file => {
@@ -86,11 +82,8 @@ function updateModList() {
                 span.innerText = " +";
             }
             span.onclick = () => {
-                // makes sure that you cant modify mod state after its put into the awaiting reload group
-                // those mods will get updated when the site is reloaded and awaitingReload (because its not stored in localStorage) will get reset
                 if (awaitingReload.includes(file)) return;
                 if (enabledMods.includes(file)) {
-                    // why on earth addMod adds "mods/" automatically and removeMod doesnt
                     removeMod(file.startsWith("mods/") ? file : "mods/" + file);
                 } else {
                     addMod(file.replace(/mods\//g, ""));
@@ -153,7 +146,6 @@ if (enabledMods.includes("mods/betterMenuScreens.js")) {
             modParent.style.display = "none";
             modManagerUrl.value = "";
             showingMenu = false;
-            // open mod manager again so the mod list menu looks like a submenu
             showModManager();
         }
         else if (showingMenu == "settings") {
@@ -162,7 +154,6 @@ if (enabledMods.includes("mods/betterMenuScreens.js")) {
             showingMenu = false;
         }
         else {
-            // do it to all elements with the class "menuParent"
             var menuParents = document.getElementsByClassName("menuParent");
             for (var i = 0; i < menuParents.length; i++) {
                 menuParents[i].style.display = "none";

@@ -15,26 +15,24 @@ function getShapeMode() {
 };
 
 function drawPixels(forceTick=false) {
-	// newCurrentPixels = shuffled currentPixels
+
 	var newCurrentPixels = currentPixels.slice();
 	var pixelsFirst = [];
 	var pixelsLast = [];
 	if (!paused || forceTick) {
 		shuffleArray(newCurrentPixels);
 	}
-	/*{newCurrentPixels.sort(function(p) { // shuffle the pixels but keep elements[p.element].isGas last
-		return 0.5 - Math.random();
-	})} // shuffle the pixels if not paused*/
+
 	for (var i = 0; i < newCurrentPixels.length; i++) {
 		pixel = newCurrentPixels[i];
-		//if (pixelMap[pixel.x][pixel.y] == undefined || currentPixels.indexOf(pixel) == -1) {continue}
+
 		if (pixel.del) {continue}
 		if (!paused || forceTick) {
-			if (elements[pixel.element].tick) { // Run tick function if it exists
+			if (elements[pixel.element].tick) { 
 				elements[pixel.element].tick(pixel);
 			}
 			if (pixel.del) {continue}
-			if (elements[pixel.element].behavior) { // Parse behavior if it exists
+			if (elements[pixel.element].behavior) { 
 				pixelTick(pixel);
 			}
 		};
@@ -45,7 +43,7 @@ function drawPixels(forceTick=false) {
 			pixelsFirst.push(pixel);
 		}
 	}
-	// Draw the current pixels
+
 	var canvas = document.getElementById("game");
 	var ctx = canvas.getContext("2d");
 	var pixelDrawList = pixelsFirst.concat(pixelsLast);
@@ -55,8 +53,8 @@ function drawPixels(forceTick=false) {
 		if (view===null || view===3) {
 			ctx.fillStyle = pixel.color;
 		}
-		else if (view === 2) { // thermal view
-			// set the color to pixel.temp, from hottest at 0 hue to coldest 225 hue, with the minimum being -273, max being 6000
+		else if (view === 2) { 
+
 			var temp = pixel.temp;
 			if (temp < -273) {temp = -273}
 			if (temp > 6000) {temp = 6000}
@@ -65,9 +63,9 @@ function drawPixels(forceTick=false) {
 			if (hue > 225) {hue = 225}
 			ctx.fillStyle = "hsl("+hue+",100%,50%)";
 		}
-		else if (view === 4) { // smooth view, average of surrounding pixels
+		else if (view === 4) { 
 			var colorlist = [];
-			// check adjacent coords on the pixelMap, add the color to the list if the pixel is not empty and the color indexOf "rgb" is not -1
+
 			for (var j = 0; j < biCoords.length; j++) {
 				var x = pixel.x + biCoords[j][0];
 				var y = pixel.y + biCoords[j][1];
@@ -88,7 +86,7 @@ function drawPixels(forceTick=false) {
 		var acidOffset1 = (settings.doAcid ?? false) * (18*Math.sin((pixel.y+incrementt)/4.4));
 		var acidOffset2 = (settings.doAcid ?? false) * (18*Math.sin((pixel.x+incrementt)/4.4));
 		if ((view === null || view === 4) && elements[pixel.element].isGas) {
-			//gas rendering
+
 			switch(mode) {
 				case "circles":
 					ctx.globalAlpha = 0.66;
@@ -114,7 +112,7 @@ function drawPixels(forceTick=false) {
 					break;
 			};
 		}
-		else { // draw the pixel (default)
+		else { 
 			switch(mode) {
 				case "circles":
 					ctx.beginPath();
@@ -135,7 +133,7 @@ function drawPixels(forceTick=false) {
 					break;
 			};
 		}
-		if (pixel.charge && view !== 2) { // Yellow glow on charge
+		if (pixel.charge && view !== 2) { 
 			if (!elements[pixel.element].colorOn) {
 				ctx.fillStyle = "rgba(255,255,0,0.5)";
 				switch(mode) {
@@ -164,17 +162,14 @@ function drawPixels(forceTick=false) {
 }
 
 runAfterLoad(function() {
-	//Setting
+
 	var settingsMenu = document.getElementById("settingsMenu").getElementsByClassName("menuText")[0];
 
 	var settingNodes = [...settingsMenu.childNodes].filter(function(node) { return node.nodeType == 1 });
 	var lastSetting = settingNodes[settingNodes.length - 1];
-	//console.log(lastSetting);
-	//console.log(lastSetting.getAttribute("style"));
-	lastSetting.removeAttribute("style"); //restore padding for worldgen setting;
-	//console.log(lastSetting.getAttribute("style"));
 
-	//Shape setting
+	lastSetting.removeAttribute("style"); 
+
 	var shapeSettingSpan = document.createElement("span");
 	shapeSettingSpan.setAttribute("setting","shapeMode");
 	shapeSettingSpan.setAttribute("class","setting-span");
@@ -198,7 +193,6 @@ runAfterLoad(function() {
 		shapeSettingSpan.appendChild(settingDropdown);
 	settingsMenu.appendChild(shapeSettingSpan);
 
-	//Acid setting
 	var acidSettingSpan = document.createElement("span");
 	acidSettingSpan.setAttribute("setting","doAcid");
 	acidSettingSpan.setAttribute("class","setting-span");
@@ -223,6 +217,6 @@ runAfterLoad(function() {
 
 	settingNodes = [...settingsMenu.childNodes].filter(function(node) { return node.nodeType == 1 });
 	lastSetting = settingNodes[settingNodes.length - 1];
-	//console.log(lastSetting);
-	lastSetting.setAttribute("style","padding-bottom:0"); //remove padding from last setting;
+
+	lastSetting.setAttribute("style","padding-bottom:0"); 
 });

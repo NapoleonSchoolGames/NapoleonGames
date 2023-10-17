@@ -3,36 +3,7 @@ var fireMod = "mods/fire_mod.js";
 var changeTempMod = "mods/changeTempReactionParameter.js";
 
 if(enabledMods.includes(fireMod) && enabledMods.includes(changeTempMod)) {
-	/*####################################\
-	#TODO: Pentyl line physical properties#
-	\####################################*/
 
-
-	//Most hydrocarbons are fantastically colored for convenience
-	//Benzene ring
-		//Benzene is actually yellowish
-			//For combinations, it will represent a + shift in hue
-	//Isomerism
-		//Isomers like isobutane have slightly increased hue and sat
-		//Cis- isomers are darkened and trans- isomers are lightened
-	//Chain length
-		//Methyl line is purple
-			//plus benzene = pink
-		//Ethyl line is rose
-			//plus benzene = red
-		//Propyl line is green
-			//plus benzene = mint
-		//Butyl line is cyan
-			//plus benzene = blue
-		//Pentyl line is vermillion
-			//plus benzene = orange
-	//Bond type
-		//Alkanes are lightest
-		//Alkenes are darker
-		//Alkynes are darkest
-		//Benzene is non-ternary with respect to single vs double bond
-
-	//Benzene
 
 		elements.benzene = {
 			color: "#edf099",

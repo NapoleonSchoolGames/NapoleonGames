@@ -2,45 +2,28 @@ var modName = "mods/fire_mod.js";
 var libraryMod = "mods/code_library.js";
 
 if(enabledMods.includes(libraryMod)) {
-	/*	elements.iron.reactions.radiation =
-		{elem1: 'dirty_water', elem2: null}
-		when radiation touches iron,
-		the iron turns into dirty_water (elem1)
-		and the radiation deletes itself (elem2)
 
-		elements.AAA.reactions.BBB:
-		{elem1: CCC, elem2: DDD}
-		when BBB touches AAA,
-		the AAA becomes CCC
-		and the BBB becomes DDD
-	*/
-
-	//	imaginary reaction elements.iron.reactions.test
-
-	//Variable
 	fireSpawnBlacklist = ["fire","cold_fire","rad_fire"];
 
-	//doBurning
 	function doBurning(pixel) {
-		if (pixel.burning) { // Burning
+		if (pixel.burning) { 
 			pixel.burnStart ??= pixelTicks;
 			var info = elements[pixel.element];
 			var burnTempChange = info.burnTempChange ?? 1;
 			var fireIsCold;
-			var fire = info.fireElement === undefined ? "fire" : info.fireElement; //allow null but disallow undefined
-			//console.log(info.fireElement,fire);
+			var fire = info.fireElement === undefined ? "fire" : info.fireElement; 
+
 			while(fire instanceof Array) {
 				fire = fire[Math.floor(Math.random()*fire.length)];
 			};
 			var fireTemp = info.fireSpawnTemp ?? pixel.temp;
 			var fireChance = info.fireSpawnChance ?? 10;
 			var fireIsCold = (fire === "cold_fire");
-			//var fireInfo = fire === null ? null : elements[fire];
 
 			pixel.temp += burnTempChange;
 			pixelTempCheck(pixel);
-			
-			for (var i = 0; i < adjacentCoords.length; i++) { // Burn adjacent pixels
+
+			for (var i = 0; i < adjacentCoords.length; i++) { 
 				var x = pixel.x+adjacentCoords[i][0];
 				var y = pixel.y+adjacentCoords[i][1];
 				if (!isEmpty(x,y,true)) {
@@ -52,7 +35,7 @@ if(enabledMods.includes(libraryMod)) {
 						newFire = newFire[Math.floor(Math.random()*newFire.length)];
 					};
 					newFireIsCold = (newFire === "cold_fire");
-					//console.log(`burning pixel ${pixel.element}: ${fire} (${fireIsCold}) / burned element ${newPixel.element}: ${newFire} (${newFireIsCold})`);
+
 					if((!fireIsCold && !newFireIsCold) || (fireIsCold && newFireIsCold)) {
 						if (elements[newPixel.element].burn && !newPixel.burning) {
 							if (Math.floor(Math.random()*100) < elements[newPixel.element].burn) {
@@ -70,7 +53,7 @@ if(enabledMods.includes(libraryMod)) {
 					burnInto = burnInto[Math.floor(Math.random()*burnInto.length)];
 				};
 				changePixel(pixel,burnInto,burnInto !== "smoke");
-				//console.log("ass");
+
 				pixel.temp = fireTemp;
 				if (info.fireColor != undefined && burnInto == "fire") {
 					pixel.color = pixelColorPick(pixel,info.fireColor);
@@ -79,8 +62,8 @@ if(enabledMods.includes(libraryMod)) {
 					pixel.color = pixelColorPick(pixel)
 				}
 			}
-			else if (Math.floor(Math.random()*100)<fireChance && !fireSpawnBlacklist.includes(pixel.element)) { // Spawn fire
-				//console.log(fire);
+			else if (Math.floor(Math.random()*100)<fireChance && !fireSpawnBlacklist.includes(pixel.element)) { 
+
 				if (isEmpty(pixel.x,pixel.y-1)) {
 					if(fire !== null) {
 						createPixel(fire,pixel.x,pixel.y-1);
@@ -90,7 +73,7 @@ if(enabledMods.includes(libraryMod)) {
 						};
 					};
 				}
-				// same for below if top is blocked
+
 				else if (isEmpty(pixel.x,pixel.y+1)) {
 					if(fire !== null) {
 						createPixel(fire,pixel.x,pixel.y+1);
@@ -103,8 +86,6 @@ if(enabledMods.includes(libraryMod)) {
 			}
 		}
 	}
-
-	//New elements
 
 	elements.cold_fire.burning = true;
 	elements.cold_fire.burnTempChange = -1;
@@ -141,7 +122,7 @@ if(enabledMods.includes(libraryMod)) {
 		stain: 0.075,
 	};
 
-	elements.rad_fire = { //this is BBB
+	elements.rad_fire = { 
 		color: ["#daff21","#a6ff00","#ffff00"],
 		behavior: [
 			"XX|CR:radiation%0.1|XX",
@@ -152,30 +133,30 @@ if(enabledMods.includes(libraryMod)) {
 			if(Math.random() < 0.4) {
 				pixel.temp++;
 			};
-			
-			if(Math.random() < 0.05) { //5%/t to radify
+
+			if(Math.random() < 0.05) { 
 				if(typeof(transformAdjacent) === "function" && typeof(radioactiveObject) === "object") {
 					transformAdjacent(pixel,radioactiveObject);
 				};
 			};
-			
+
 			var move1Spots = [[-1,-1],[0,-1],[1,-1]];
 			var move2Spots = [[-1,0],[0,1],[1,0]];
-			
+
 			var randomMove1 = move1Spots[Math.floor(Math.random() * move1Spots.length)];
-			
+
 			if(!tryMove(pixel, pixel.x+randomMove1[0], pixel.y+randomMove1[1])) {
-				//console.log((pixel.x+randomMove1[0]) + " " + (pixel.y+randomMove1[1]))
+
 				var newPixel = null;
 				if(!outOfBounds(pixel.x+randomMove1[0],pixel.y+randomMove1[1])) {
-					newPixel = pixelMap[pixel.x+randomMove1[0]][pixel.y+randomMove1[1]]; //newPixel is AAA
+					newPixel = pixelMap[pixel.x+randomMove1[0]][pixel.y+randomMove1[1]]; 
 				};
 				if(outOfBounds(pixel.x+randomMove1[0],pixel.y+randomMove1[1]) || !reactionStealer(pixel,newPixel,"radiation")) {
 					var randomMove2 = move2Spots[Math.floor(Math.random() * move2Spots.length)];
 					if(!tryMove(pixel, pixel.x+randomMove2[0], pixel.y+randomMove2[1])) {
 						var newPixel = null;
 						if(!outOfBounds(pixel.x+randomMove1[0],pixel.y+randomMove1[1])) {
-							newPixel = pixelMap[pixel.x+randomMove1[0]][pixel.y+randomMove1[1]]; //newPixel is AAA
+							newPixel = pixelMap[pixel.x+randomMove1[0]][pixel.y+randomMove1[1]]; 
 						};
 						if(newPixel !== null) { reactionStealer(pixel,newPixel,"radiation") };
 					};
@@ -183,8 +164,8 @@ if(enabledMods.includes(libraryMod)) {
 			};
 			doDefaults(pixel);
 		},
-		reactions: { //fire + radiation reacts
-			//Merged water-radiation reactions, plus altered seltzer
+		reactions: { 
+
 			"water": { "elem1": "rad_smoke", "elem2":"rad_steam", "chance":0.4 },
 			"steam": { "elem1": "rad_smoke", "elem2":"rad_steam", "chance":0.4 },
 			"carbon_dioxide": { "elem1": "rad_smoke", "elem2":"rad_steam", "chance":0.4 },
@@ -192,13 +173,12 @@ if(enabledMods.includes(libraryMod)) {
 			"salt_water": { "elem1": "rad_smoke", "elem2":"rad_steam", "chance":0.4 },
 			"sugar_water": { "elem1": "rad_smoke", "elem2":"rad_steam", "chance":0.4 },
 			"seltzer": { "elem1": "rad_smoke", "elem2":"rad_steam", "chance":0.4 },
-			//Radiation reactions added programatically
+
 		},
 		temp:800,
 		tempLow:150,
 		stateLow: "rad_smoke",
-		//tempHigh: 7000,
-		//stateHigh: "rad_plasma",
+
 		category: "energy",
 		burning: true,
 		fireElement: "radiation",
@@ -220,12 +200,12 @@ if(enabledMods.includes(libraryMod)) {
 				deletePixel(pixel.x,pixel.y);
 				return;
 			};
-			
+
 			if(Math.random() < 0.2) {
 				pixel.temp++;
 			};
-			
-			if(Math.random() < 0.04) { //4%/t to radify
+
+			if(Math.random() < 0.04) { 
 				if(typeof(transformAdjacent) === "function" && typeof(radioactiveObject) === "object") {
 					transformAdjacent(pixel,radioactiveObject);
 				};
@@ -233,20 +213,20 @@ if(enabledMods.includes(libraryMod)) {
 
 			var move1Spots = [[0,-1],[1,0],[0,1],[-1,0]];
 			var move2Spots = [[-1,-1],[1,-1],[1,1],[-1,1]];
-			
+
 			var randomMove1 = move1Spots[Math.floor(Math.random() * move1Spots.length)];
 			if(!tryMove(pixel, pixel.x+randomMove1[0], pixel.y+randomMove1[1])) {
-				//console.log((pixel.x+randomMove1[0]) + " " + (pixel.y+randomMove1[1]))
+
 				var newPixel = null;
 				if(!outOfBounds(pixel.x+randomMove1[0],pixel.y+randomMove1[1])) {
-					newPixel = pixelMap[pixel.x+randomMove1[0]][pixel.y+randomMove1[1]]; //newPixel is AAA
+					newPixel = pixelMap[pixel.x+randomMove1[0]][pixel.y+randomMove1[1]]; 
 				};
 				if(outOfBounds(pixel.x+randomMove1[0],pixel.y+randomMove1[1]) || !reactionStealer(pixel,newPixel,"radiation")) {
 					var randomMove2 = move2Spots[Math.floor(Math.random() * move2Spots.length)];
 					if(!tryMove(pixel, pixel.x+randomMove2[0], pixel.y+randomMove2[1])) {
 						var newPixel = null;
 						if(!outOfBounds(pixel.x+randomMove1[0],pixel.y+randomMove1[1])) {
-							newPixel = pixelMap[pixel.x+randomMove1[0]][pixel.y+randomMove1[1]]; //newPixel is AAA
+							newPixel = pixelMap[pixel.x+randomMove1[0]][pixel.y+randomMove1[1]]; 
 						};
 						if(newPixel !== null) { reactionStealer(pixel,newPixel,"radiation") };
 					};
@@ -255,19 +235,11 @@ if(enabledMods.includes(libraryMod)) {
 			doDefaults(pixel);
 		},
 		reactions: {
-			//Spreading
+
 			"liquid_fire": { "elem2":"liquid_rad_fire", "chance":0.2 },
 			"fire": { "elem2":"rad_fire", "chance":0.2 },
 			"smoke": { "elem2":"rad_smoke", "chance":0.2 },
-			/*"steam": { "elem1": "pyrocumulus", "chance":0.08, "y":[0,12], "setting":"clouds" },
-			"rain_cloud": { "elem1": "pyrocumulus", "chance":0.08, "y":[0,12], "setting":"clouds" },
-			"cloud": { "elem1": "pyrocumulus", "chance":0.08, "y":[0,12], "setting":"clouds" },
-			"snow_cloud": { "elem1": "pyrocumulus", "chance":0.08, "y":[0,12], "setting":"clouds" },
-			"hail_cloud": { "elem1": "pyrocumulus", "chance":0.08, "y":[0,12], "setting":"clouds" },
-			"acid_cloud": { "elem1": "pyrocumulus", "chance":0.05, "y":[0,12], "setting":"clouds" },
-			"fire_cloud": { "elem1": "pyrocumulus", "chance":0.05, "y":[0,12], "setting":"clouds" },
-			"pyrocumulus": { "elem1": "pyrocumulus", "chance":0.08, "y":[0,12], "setting":"clouds" },*/
-			//Radiation reactions added programatically
+
 		},
 		temp: 134,
 		tempHigh: 595,
@@ -346,7 +318,7 @@ if(enabledMods.includes(libraryMod)) {
 		category: "weapons",
 		state: "liquid",
 		viscosity: 1000,
-		density: 1200, //google was f***ing useless and i'm not searching that again, so arbitrary 1.2 it is
+		density: 1200, 
 		burnTempChange: 3,
 		burn: 300,
 		burnTime: 500,
@@ -354,7 +326,7 @@ if(enabledMods.includes(libraryMod)) {
 	},
 
 	elements.hypernapalm = {
-		name: "h y p e r n a p a l m", //HYPERNAPALM
+		name: "h y p e r n a p a l m", 
 		color: "#bd34eb",
 		behavior: [
 			"XX|SA%40 AND ST|XX",
@@ -450,7 +422,7 @@ if(enabledMods.includes(libraryMod)) {
 				],
 				reactions: {
 					"fire": { "elem1": "liquid_smoke", "elem2": "liquid_smoke" },
-					"plasma": { "elem1": "le_liquid_light", "elem2": "le_liquid_light" }, //prefixed to avoid conflict with F&M liquid_light
+					"plasma": { "elem1": "le_liquid_light", "elem2": "le_liquid_light" }, 
 				},
 				temp:-200,
 				tempHigh:0,
@@ -476,29 +448,28 @@ if(enabledMods.includes(libraryMod)) {
 					if(Math.random() < 0.4) {
 						pixel.temp++;
 					};
-					
-					if(Math.random() < 0.06) { //6%/t to radify
+
+					if(Math.random() < 0.06) {
 						if(typeof(transformAdjacent) === "function" && typeof(radioactiveObject) === "object") {
 							transformAdjacent(pixel,radioactiveObject);
 						};
 					};
-			
+
 					var move1Spots = [[-1,1],[0,1],[1,1]];
 					var move2Spots = [[-1,0],[0,-1],[1,0]];
-					
+
 					var randomMove1 = move1Spots[Math.floor(Math.random() * move1Spots.length)];
 					if(!tryMove(pixel, pixel.x+randomMove1[0], pixel.y+randomMove1[1])) {
-						//console.log((pixel.x+randomMove1[0]) + " " + (pixel.y+randomMove1[1]))
 						var newPixel = null;
 						if(!outOfBounds(pixel.x+randomMove1[0],pixel.y+randomMove1[1])) {
-							newPixel = pixelMap[pixel.x+randomMove1[0]][pixel.y+randomMove1[1]]; //newPixel is AAA
+							newPixel = pixelMap[pixel.x+randomMove1[0]][pixel.y+randomMove1[1]];
 						};
 						if(outOfBounds(pixel.x+randomMove1[0],pixel.y+randomMove1[1]) || !reactionStealer(pixel,newPixel,"radiation")) {
 							var randomMove2 = move2Spots[Math.floor(Math.random() * move2Spots.length)];
 							if(!tryMove(pixel, pixel.x+randomMove2[0], pixel.y+randomMove2[1])) {
 								var newPixel = null;
 								if(!outOfBounds(pixel.x+randomMove1[0],pixel.y+randomMove1[1])) {
-									newPixel = pixelMap[pixel.x+randomMove1[0]][pixel.y+randomMove1[1]]; //newPixel is AAA
+									newPixel = pixelMap[pixel.x+randomMove1[0]][pixel.y+randomMove1[1]]; 
 								};
 								if(newPixel !== null) { reactionStealer(pixel,newPixel,"radiation") };
 							};
@@ -506,8 +477,7 @@ if(enabledMods.includes(libraryMod)) {
 					};
 					doDefaults(pixel);
 				},
-				reactions: { //fire + radiation reacts
-					//Merged water-radiation reactions, plus altered seltzer
+				reactions: {
 					"water": { "elem1": "rad_smoke", "elem2":"rad_steam", "chance":0.4 },
 					"steam": { "elem1": "rad_smoke", "elem2":"rad_steam", "chance":0.4 },
 					"carbon_dioxide": { "elem1": "rad_smoke", "elem2":"rad_steam", "chance":0.4 },
@@ -515,13 +485,8 @@ if(enabledMods.includes(libraryMod)) {
 					"salt_water": { "elem1": "rad_smoke", "elem2":"rad_steam", "chance":0.4 },
 					"sugar_water": { "elem1": "rad_smoke", "elem2":"rad_steam", "chance":0.4 },
 					"seltzer": { "elem1": "rad_smoke", "elem2":"rad_steam", "chance":0.4 },
-					//Radiation reactions added programatically
 				},
 				temp:800,
-				//tempLow:100,
-				//stateLow: "liquid_smoke",
-				//tempHigh: 7000,
-				//stateHigh: "liquid_plasma",
 				category: "energy liquids",
 				burning: true,
 				burnTime: Infinity,
@@ -532,21 +497,21 @@ if(enabledMods.includes(libraryMod)) {
 				density: 21,
 			};
 		};
-		
+
 		elements.radiation.reactions.liquid_fire = { "elem2":"liquid_rad_fire", "chance":0.4 };
 		elements.radiation.reactions.fire = { "elem2":"rad_fire", "chance":0.4 };
 		elements.radiation.reactions.smoke = { "elem2":"rad_smoke", "chance":0.4 };
-		
+
 		runAfterLoad(function() {
 			for(key in elements.radiation.reactions) {
 				var value = elements.radiation.reactions[key];
-				
+
 				if(typeof(elements.rad_fire.reactions[key]) === "undefined") {
 					elements.rad_fire.reactions[key] = value;
 				};
 			};
 		});
-		
+
 		if(enabledMods.includes("mods/randomness.js")) {
 			elements.unnamed_gas.burnTempChange = 10;
 			elements.unnamed_gas.fireElement = "plasma";
