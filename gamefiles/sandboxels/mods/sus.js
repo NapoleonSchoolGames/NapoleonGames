@@ -12,6 +12,7 @@ function createSus(right, top) {
     hidden: true,
   }
 }
+
 function createSusTop(top) {
   return {
     color: "#ff0000",
@@ -26,6 +27,7 @@ function createSusTop(top) {
     hidden: true,
   }
 }
+
 function createSusTopRow(right) {
   return {
     color: "#ff0000",
@@ -79,14 +81,6 @@ elements.top = {
   hidden: true,
 }
 
-// Colors
 elements.sus2.color = "#000000"
 elements.sus8.color = "#00ffff"
 elements.sus9.color = "#00ffff"
-
-/* 
-susA susB susC
-sus7 sus8 sus9
-sus4 sus5 sus6
-sus_ sus2 sus3
-*/

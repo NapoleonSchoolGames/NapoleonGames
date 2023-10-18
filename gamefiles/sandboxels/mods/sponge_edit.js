@@ -33,7 +33,7 @@ if(enabledMods.includes(onTryMoveIntoMod) && enabledMods.includes(libraryMod)) {
 			doBurning(pixel);
 		};
 	};
-	
+
 	elements.sponge.onTryMoveInto = function(pixel,otherPixel) {
 		var absorbedElements = Object.keys(pixel.absorbed);
 		if(absorbedElements.length == 0) {
@@ -41,21 +41,21 @@ if(enabledMods.includes(onTryMoveIntoMod) && enabledMods.includes(libraryMod)) {
 		};
 		var otherInfo = elements[otherPixel.element]
 		if((otherInfo.state ?? "solid") == "solid" && (otherInfo.density ?? 1000) >= 200) {
-			//console.log(otherPixel.element,otherInfo.state);
+
 			var outputOffsets = [pixel.x - otherPixel.x, pixel.y - otherPixel.y];
 			var twiceOffsets = outputOffsets.map(x => x * 2);
 			var newCoords = [pixel.x + outputOffsets[0], pixel.y + outputOffsets[1]];
 			var twiceCoords = [pixel.x + twiceOffsets[0], pixel.y + twiceOffsets[1]];
 			if(!isEmpty(newCoords[0],newCoords[1],true)) {
-				if(outOfBounds(newCoords[0],newCoords[1])) { //fail if OOB
+				if(outOfBounds(newCoords[0],newCoords[1])) { 
 					return false;
 				};
 				var newPixel = pixelMap[newCoords[0]][newCoords[1]];
-				if((elements[newPixel.element].state ?? "solid") !== "gas") { //only displace gases
+				if((elements[newPixel.element].state ?? "solid") !== "gas") { 
 					return false;
 				};
-				if(!tryMove(newPixel,twiceCoords[0],twiceCoords[1])) { //if it can't push the gas out to the next pixel over
-					return false; //then return false because perpendicular expulsion too complex and multifaceted to deal with
+				if(!tryMove(newPixel,twiceCoords[0],twiceCoords[1])) { 
+					return false; 
 				};
 			};
 			if(isEmpty(pixel.x,pixel.y+1)) {

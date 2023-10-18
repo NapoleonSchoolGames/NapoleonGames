@@ -5,4 +5,4 @@ elements.mayo = {
     viscosity: 100000,
     state: "liquid",
     density: 720,
-};
+  };

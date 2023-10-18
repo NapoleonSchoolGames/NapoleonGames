@@ -1,12 +1,12 @@
-function randomOfTwo(option1,option2,leftChance=0.5) {
-	if(Math.random() < leftChance) {
-		return option1;
+function randomOfTwo(option1, option2, leftChance = 0.5) {
+	if (Math.random() < leftChance) {
+	  return option1;
 	} else {
-		return option2;
+	  return option2;
 	};
-};
-
-elements.xdct = {
+  };
+  
+  elements.xdct = {
 	name: "x-dependent change test",
 	color: "#cc33cc",
 	hardness: 0.5,
@@ -15,20 +15,20 @@ elements.xdct = {
 	state: "solid",
 	category: "solids",
 	tick: function(pixel) {
-		var halfWidth = width / 2;
-		var halfHeight = height / 2;
-		var transitionLeftEdge = 4/5 * halfWidth;
-		var transitionRightEdge = 6/5 * halfWidth;
-		var x = pixel.x;
-		if(x < transitionLeftEdge) { //To the left
-			changePixel(pixel,"sand");
-		} else if(x > transitionRightEdge) { //To the right
-			changePixel(pixel,"dirt");
-		} else { //Other (e.g. equal to)
-			var distanceFromLeftEdge = x - transitionLeftEdge;
-			var distanceBetweenEdges = transitionRightEdge - transitionLeftEdge;
-			var relativePosition = distanceFromLeftEdge / distanceBetweenEdges;
-			changePixel(pixel,randomOfTwo("dirt","sand",relativePosition));
-		};
+	  var halfWidth = width / 2;
+	  var halfHeight = height / 2;
+	  var transitionLeftEdge = 4 / 5 * halfWidth;
+	  var transitionRightEdge = 6 / 5 * halfWidth;
+	  var x = pixel.x;
+	  if (x < transitionLeftEdge) {
+		changePixel(pixel, "sand");
+	  } else if (x > transitionRightEdge) {
+		changePixel(pixel, "dirt");
+	  } else {
+		var distanceFromLeftEdge = x - transitionLeftEdge;
+		var distanceBetweenEdges = transitionRightEdge - transitionLeftEdge;
+		var relativePosition = distanceFromLeftEdge / distanceBetweenEdges;
+		changePixel(pixel, randomOfTwo("dirt", "sand", relativePosition));
+	  };
 	},
-};
+  };
