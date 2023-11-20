@@ -3,7 +3,6 @@ if (top.location !== location) {
 }
 
 function reopenPopup() {
-  window.requestFullscreen();
   window.open(
     "popup.html",
     "",
