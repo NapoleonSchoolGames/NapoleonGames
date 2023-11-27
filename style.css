@@ -85,3 +85,8 @@ body {
 .shown {
   display: inline-block !important;
 }
+
+.disclaimer {
+  margin-left: auto;
+  margin-right: auto;
+}
