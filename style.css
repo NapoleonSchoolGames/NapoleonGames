@@ -86,7 +86,8 @@ body {
   display: inline-block !important;
 }
 
-.disclaimer {
+.extras {
   margin-left: auto;
   margin-right: auto;
+  text-align: center ;
 }
